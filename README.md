@@ -8,3 +8,5 @@ A Live chatting web app.
 - Python
 - Django
 - Django Channels
+
+__Currently improving it and adding new features...__
