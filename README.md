@@ -1,4 +1,4 @@
-# CONVO VEST
+# CONVO NEST
 A Live chatting web app.
 ### Frontend
 - HTML
