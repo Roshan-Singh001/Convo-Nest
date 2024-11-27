@@ -1,0 +1,161 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{request.user}}</title>
+    <link rel="stylesheet" href="{% static 'output.css' %}" />
+    <!-- <link rel="stylesheet" href="../../static/output.css"> -->
+  </head>
+
+  <body class="bg-gray-100">
+    <div class="flex h-screen flex-col md:flex-row">
+      <div class="w-full md:w-1/4 bg-green-600 text-white flex flex-col">
+        <div class="p-4 border-b border-green-500">
+          <h1 class="text-xl font-bold">ConvoNest</h1>
+        </div>
+        <ul class="people flex-grow overflow-y-auto">
+          <li class="p-4 hover:bg-green-700 cursor-pointer">
+            <div class="flex items-center">
+              <div
+                class="flex justify-center items-center size-8 rounded-full bg-slate-300"
+              >
+                <img
+                  src="{% static 'user-solid.svg' %}"
+                  alt="Profile"
+                  class="w-[1.1rem] h-4"
+                />
+              </div>
+              <div class="ml-4">
+                <p class="font-bold">{{request.user}}</p>
+              </div>
+            </div>
+          </li>
+        </ul>
+
+        <!-- Logout -->
+        {% if request.user.is_authenticated %}
+        <div class="p-4 border-t border-green-500">
+          <a
+            href="{% url 'logout-user' %}"
+            class="flex justify-center items-center-full py-2 bg-green-700 hover:bg-green-800 text-white rounded"
+            >Log out</a
+          >
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Chat Area -->
+      <div class="flex flex-col flex-grow">
+        <!-- Chat Header -->
+        <div class="bg-green-500 text-white p-4 flex items-center">
+          <div
+            class="flex justify-center items-center size-8 rounded-full bg-slate-300"
+          >
+            <img
+              src="{% static 'user-solid.svg' %}"
+              alt="Profile"
+              class="w-[1.1rem] h-4"
+            />
+          </div>
+          <div class="ml-4">
+            <h2 class="text-lg font-bold">{{request.user}}</h2>
+            <p class="text-sm text-gray-200">Online</p>
+          </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div
+          class="chat_messages flex-grow bg-white overflow-y-auto p-4 space-y-4"
+        >
+          <div class="chats flex flex-col gap-4"></div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="chat__item__container bg-gray-200 p-4 flex items-center">
+          <input
+            type="text"
+            placeholder="Type a message..."
+            id="id_message_send_input"
+            class="flex-grow p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <button
+            type="submit"
+            id="id_message_send_button"
+            class="ml-4 p-2 bg-green-500 hover:bg-green-600 text-white rounded-lg"
+          >
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+    <script>
+      const chatSocket = new WebSocket("ws://" + window.location.host + "/");
+      chatSocket.onopen = function (e) {
+        console.log("The connection was setup successfully !");
+      };
+      chatSocket.onclose = function (e) {
+        console.log("Something unexpected happened !");
+      };
+      document.querySelector("#id_message_send_input").focus();
+      document.querySelector("#id_message_send_input").onkeyup = function (e) {
+        if (e.keyCode == 13) {
+          document.querySelector("#id_message_send_button").click();
+        }
+      };
+      document.querySelector("#id_message_send_button").onclick = function (e) {
+        var messageInput = document.querySelector(
+          "#id_message_send_input"
+        ).value;
+        chatSocket.send(
+          JSON.stringify({
+            message: messageInput,
+            username: "{{request.user.username}}",
+          })
+        );
+      };
+      chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        const chat = document.querySelector(".chats");
+        const CURRENT_USER = "{{ current_user|escapejs }}";
+
+        // Create a new message container
+        const div = document.createElement("div");
+        // Check if the message is incoming or outgoing
+        if (data.username === CURRENT_USER) {
+          div.classList.add("flex", "justify-end");
+          div.innerHTML = `
+                        <div class="bg-green-500 text-white p-3 rounded-lg max-w-xs">
+                            <p class="text-sm break-words">${data.message}</p>
+                        </div>`;
+        } else {
+          div.classList.add("flex", "items-center", "space-x-2");
+          div.innerHTML = `
+                        <div class="flex justify-center items-center size-8 rounded-full bg-slate-300">
+                            <img src="{% static 'user-solid.svg' %}" alt="Profile" class="w-[1.1rem] h-4">
+                        </div>
+                        <div class="bg-gray-100 p-3 pt-0 rounded-lg max-w-xs break-words">
+                            <p class="text-sm font-bold mt-[0.1rem]">${data.username}</p>
+                            <p class="text-sm mt-[0.4rem]">${data.message}</p>
+                        </div>`;
+          // let users = document.querySelector(".people");
+          // let li = document.createElement("li");
+          // li.classList.add("p-4", "hover:bg-green-700", "cursor-pointer");
+          // li.innerHTML = `
+          //           <div class="flex items-center">
+          //               <div class="flex justify-center items-center size-8 rounded-full bg-slate-300">
+          //                   <img src="{% static 'user-solid.svg' %}" alt="Profile" class="w-[1.1rem] h-4">
+          //               </div>
+          //               <div class="ml-4">
+          //                   <p class="font-bold">${data.username}</p>
+          //               </div>
+          //           </div>`;
+          // users.appendChild(li);
+        }
+        chat.appendChild(div);
+        chat.scrollTop = chat.scrollHeight;
+      };
+    </script>
+  </body>
+</html>

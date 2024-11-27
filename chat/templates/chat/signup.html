@@ -1,0 +1,67 @@
+{% load static %}
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'output.css' %}">
+</head>
+
+<body class="bg-green-300 ">
+  <div class="page flex flex-col lg:flex-row m-4">
+    <div class="lg:w-[25%] w-full flex flex-col h-full left-page">
+      <div class="logo flex mt-4 space-x-4 justify-center items-center">
+        <p class="font-semibold text-3xl text-white">ConvoNest</p>
+        <img src="{% static  'message-square-lines-alt-svgrepo-com.svg' %}" alt="message">
+      </div>
+
+      <img src="{% static 'auth-img.png' %}" alt="img">
+    </div>
+
+    <div class="right-page lg:w-[75%] space-y-10  flex flex-col items-center   rounded-xl  w-full bg-white ">
+      <div class="heading flex flex-col items-center justify-center mt-14">
+        <p class="text-gray-700 font-semibold text-3xl">Sign in</p>
+      </div>
+
+      <form action="" class="flex mt-12 w-full space-y-7 flex-col justify-center items-center" method="post">
+        <div class="input-email space-y-2  w-[90%] lg:w-[40%] flex flex-col">
+            <label for="email" class="  text-gray-600">Email</label>
+            <input type="text" class="border border-gray-300 focus:border-blue-500 focus:outline-none p-2"
+              placeholder="Enter Email">
+          </div>
+
+        <div class="input-username space-y-2  w-[90%] lg:w-[40%] flex flex-col">
+          <label for="usrname" class="  text-gray-600">Username</label>
+          <input type="text" class="border border-gray-300 focus:border-blue-500 focus:outline-none p-2"
+            placeholder="Enter Username">
+        </div>
+
+        <div class="input-pass space-y-2 w-[90%] lg:w-[40%] flex flex-col">
+          <label for="password" class="text-gray-600">Password</label>
+          <input type="password" class="border border-gray-300 focus:border-blue-500 focus:outline-none p-2"
+            name="password" placeholder="Enter your password">
+        </div>
+
+        
+        <button class="w-[90%] lg:w-[40%] bg-green-500 hover:bg-green-600 text-white p-2 rounded-md" type="submit">Submit</button>
+      </form>
+      <div class="line lg:w-2/5 w-full relative p-2 flex items-center">
+        <hr class="w-full border-t border-gray-600">
+        <p class="absolute left-1/2 -translate-x-1/2 bg-white px-2 text-gray-600">Sign In with</p>
+      </div>
+      <div class="connect flex space-x-16">
+        <img src="{% static 'google-color-svgrepo-com.svg' %}"
+          class="p-3 hover:cursor-pointer hover:bg-gray-500 rounded-md bg-gray-200" alt="facebook">
+        <img src="{% static 'facebook-1-svgrepo-com.svg' %}" class="p-3 hover:cursor-pointer hover:bg-gray-500 rounded-md bg-gray-200"
+          alt="google">
+      </div>
+
+      <div class="already-have-account flex space-x-2">
+        <p class="text-sm text-gray-400">Already a user ?</p>
+        <a href="{% url 'login-user' %}" class="text-green-400 hover:text-green-600">Login</a>
+      </div>
+    </div>
+  </div>
+
+</html>
